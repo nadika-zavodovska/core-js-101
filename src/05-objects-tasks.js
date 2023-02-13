@@ -20,9 +20,14 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  this.getArea = function() {
+    return this.width * this.height;
+  };
 }
+
 
 
 /**
@@ -35,9 +40,10 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
+
 
 
 /**
@@ -51,9 +57,14 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
-}
+function fromJSON(proto, json) {
+  const parsed = JSON.parse(json);
+  const obj = Object.create(proto);
+  for (const key in parsed) {
+  obj[key] = parsed[key];
+  }
+  return obj;
+  }
 
 
 /**
@@ -111,35 +122,109 @@ function fromJSON(/* proto, json */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+  return new ElementSelector(value);
   },
-
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+  return new IdSelector(value);
   },
-
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+  return new ClassSelector(value);
   },
-
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+  return new AttributeSelector(value);
   },
-
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+  return new PseudoClassSelector(value);
   },
-
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+  return new PseudoElementSelector(value);
   },
-
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+  return new CombinedSelector(selector1, combinator, selector2);
   },
-};
+  };
 
+  class Selector {
+  constructor(type) {
+  this.type = type;
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class ElementSelector extends Selector {
+  constructor(value) {
+  super("element");
+  this.value = value;
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class IdSelector extends Selector {
+  constructor(value) {
+  super("id");
+  this.value = #${value};
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class ClassSelector extends Selector {
+  constructor(value) {
+  super("class");
+  this.value = .${value};
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class AttributeSelector extends Selector {
+  constructor(value) {
+  super("attribute");
+  this.value = [${value}];
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class PseudoClassSelector extends Selector {
+  constructor(value) {
+  super("pseudo-class");
+  this.value = :${value};
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class PseudoElementSelector extends Selector {
+  constructor(value) {
+  super("pseudo-element");
+  this.value = ::${value};
+  }
+  stringify() {
+  return this.value;
+  }
+  }
+
+  class CombinedSelector extends Selector {
+  constructor(selector1, combinator, selector2) {
+  super("combined");
+  this.selector1 = selector1;
+  this.combinator = combinator;
+  this.selector2 = selector2;
+  }
+  stringify() {
+  return ${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()};
+  }
+  }
 
 module.exports = {
   Rectangle,

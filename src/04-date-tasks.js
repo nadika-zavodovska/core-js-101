@@ -19,9 +19,10 @@
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return new Date(value);
 }
+
 
 /**
  * Parses an ISO 8601 string date representation into date value
@@ -34,9 +35,10 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
+
 
 
 /**
@@ -53,9 +55,19 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  let year = date.getFullYear();
+  if (year % 400 === 0) {
+    return true;
+  } else if (year % 100 === 0) {
+    return false;
+  } else if (year % 4 === 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
+
 
 
 /**
@@ -73,9 +85,20 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  let delta = endDate - startDate;
+  let deltaSeconds = delta / 1000;
+  let hours = Math.floor(deltaSeconds / 3600);
+  let minutes = Math.floor((deltaSeconds % 3600) / 60);
+  let seconds = Math.floor(deltaSeconds % 60);
+  let milliseconds = delta % 1000;
+  let hoursString = hours.toString().padStart(2, '0');
+  let minutesString = minutes.toString().padStart(2, '0');
+  let secondsString = seconds.toString().padStart(2, '0');
+  let millisecondsString = milliseconds.toString().padStart(3, '0');
+  return `${hoursString}:${minutesString}:${secondsString}.${millisecondsString}`;
 }
+
 
 
 /**
@@ -94,9 +117,16 @@ function timeSpanToString(/* startDate, endDate */) {
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  let hours = date.getUTCHours();
+  let minutes = date.getUTCMinutes();
+  let hoursAngle = (hours % 12 + minutes / 60) * 30;
+  let minutesAngle = minutes * 6;
+  let angle = Math.abs(hoursAngle - minutesAngle);
+  angle = Math.min(angle, 360 - angle);
+  return angle * Math.PI / 180;
 }
+
 
 
 module.exports = {
